@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VIT | Portal Chronos</title>
+    <style>
+        :root {
+            --win-blue: #2d5d8b;
+            --vit-blue: #2e3191;
+            --vit-gold: #f0ad4e;
+            --mesh-1: #4f46e5;
+            --mesh-2: #fbbf24;
+        }
+
+        body, html { margin: 0; padding: 0; min-height: 100vh; font-family: 'Tahoma', 'Segoe UI', sans-serif; overflow: hidden; background: #000; }
+
+        /* --- SPACE & TRANSITION LAYERS --- */
+        #spaceCanvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; pointer-events: none;
+        }
+
+        #flashOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; z-index: 999; opacity: 0; pointer-events: none;
+            transition: opacity 0.1s ease;
+        }
+
+        /* --- RETRO SITE (2009) --- */
+        #retro-site { 
+            background: url('https://wallpaperaccess.com/full/1567665.jpg') no-repeat center center fixed;
+            background-size: cover; min-height: 100vh; padding-bottom: 50px;
+            position: relative; z-index: 10;
+            transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.7, 0, 0.84, 0);
+        }
+
+        .win7-shell { 
+            width: 1000px; margin: 40px auto; 
+            background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 10px; overflow: hidden;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.7);
+        }
+
+        .aero-bar {
+            background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(20px); 
+            padding: 15px 25px; border-bottom: 1px solid rgba(255,255,255,0.6);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .vit-brand { font-size: 26px; font-weight: 900; color: var(--vit-blue); letter-spacing: -1px; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
+
+        .glossy-menu {
+            background: linear-gradient(to bottom, #4b4fa1 0%, #2e3191 50%, #1e2063 51%, #2e3191 100%);
+            display: flex; border-top: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .glossy-menu a {
+            color: white; padding: 12px 22px; text-decoration: none; font-size: 11px; font-weight: bold;
+            text-shadow: 0 -1px 1px #000; border-right: 1px solid rgba(0,0,0,0.2);
+        }
+
+        .marquee-container { background: rgba(255, 248, 188, 0.9); border: 1px solid #e6db55; padding: 8px; margin: 20px; font-size: 12px; color: #856404; }
+
+        .sidebar-gadget {
+            background: rgba(240, 240, 240, 0.8); backdrop-filter: blur(5px);
+            border: 2px solid #aaa; border-radius: 50%; width: 120px; height: 120px;
+            margin: 20px auto; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.1), 3px 3px 10px rgba(0,0,0,0.3);
+        }
+
+        .upgrade-banner {
+            background: linear-gradient(135deg, #2e3191, #f0ad4e);
+            padding: 2px; border-radius: 8px; margin: 20px; cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .upgrade-inner { background: rgba(255, 255, 255, 0.95); padding: 30px; text-align: center; border-radius: 6px; }
+
+        .retro-btn {
+            background: linear-gradient(to bottom, #fff, #e0e0e0);
+            border: 1px solid #707070; border-radius: 3px; padding: 8px 20px;
+            cursor: pointer; font-family: 'Tahoma'; font-size: 11px; font-weight: bold;
+        }
+
+        /* --- FUTURE SITE (2026) --- */
+        #future-site {
+            display: none; opacity: 0; min-height: 100vh; width: 100%;
+            background: transparent; color: white;
+            font-family: 'Inter', system-ui, sans-serif;
+            position: absolute; top: 0; left: 0; z-index: 20;
+            transition: opacity 1s ease;
+        }
+
+        .modern-wrapper { max-width: 1400px; margin: 0 auto; padding: 80px 50px; }
+        .future-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 100px; }
+        .future-logo { font-size: 24px; font-weight: 800; letter-spacing: 6px; border-left: 4px solid var(--vit-gold); padding-left: 20px; }
+        .hero-text { font-size: 110px; font-weight: 900; margin-bottom: 70px; line-height: 0.8; letter-spacing: -5px; }
+        .bento-box { display: grid; grid-template-columns: repeat(12, 1fr); gap: 30px; }
+
+        .bento-card {
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 40px; padding: 50px; backdrop-filter: blur(30px);
+            transition: all 0.8s cubic-bezier(0.15, 0.83, 0.66, 1);
+        }
+
+        .pill-btn {
+            background: white; color: black; border: none; padding: 20px 45px;
+            border-radius: 100px; font-weight: 900; cursor: pointer; text-transform: uppercase;
+        }
+
+        .back-link {
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); padding: 15px 35px;
+            background: rgba(255,255,255,0.05); color: #fff; border-radius: 100px; border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="spaceCanvas"></canvas>
+    <div id="flashOverlay"></div>
+
+    <div id="retro-site">
+        <div class="win7-shell">
+            <header class="aero-bar">
+                <div class="vit-brand">VIT UNIVERSITY</div>
+                <div style="text-align: right; font-size: 11px; font-weight: bold; color: var(--vit-blue);">
+                    VELLORE, INDIA<br>
+                    <span id="time-display">00:00:00 PM</span>
+                </div>
+            </header>
+
+            <nav class="glossy-menu">
+                <a href="#">ADMISSIONS</a>
+                <a href="#">ACADEMICS</a>
+                <a href="#">V-TOP LOGIN</a>
+                <a href="#">RESEARCH</a>
+                <a href="#">GRAVITAS '09</a>
+            </nav>
+
+            <div style="display: grid; grid-template-columns: 1fr 250px; gap: 10px; padding: 10px; background: rgba(255,255,255,0.4);">
+                <main>
+                    <div class="marquee-container">
+                        <marquee scrollamount="5"><b>CAMPUS UPDATES:</b> Chancellor Dr. G. Viswanathan announces new research grants... FFCS course registration begins...</marquee>
+                    </div>
+
+                    <div style="padding: 25px;">
+                        <h1 style="color: var(--vit-blue); font-size: 26px; border-bottom: 3px solid var(--vit-gold); padding-bottom: 10px;">Central University Portal</h1>
+                        <p style="font-size: 14px; line-height: 1.7; color: #333;">A Place to Learn, A Chance to Grow. VIT stands at the forefront of technical education.</p>
+                        
+                        <div class="upgrade-banner" onclick="initiateWarp()">
+                            <div class="upgrade-inner">
+                                <span style="color: var(--vit-blue); font-weight: 900; font-size: 11px; letter-spacing: 2px;">SECURE UPGRADE DETECTED</span>
+                                <h2 style="margin: 12px 0; font-size: 24px; color: #111;">MIGRATE TO V-TOP NEXT 2026</h2>
+                                <button class="retro-btn" style="padding: 12px 40px;">AUTHORIZE & LAUNCH</button>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+
+                <aside style="border-left: 1px solid rgba(0,0,0,0.1); padding: 15px;">
+                    <div class="sidebar-gadget">
+                        <div style="font-size: 10px; color: #555;">VELLORE TIME</div>
+                        <div id="large-clock" style="font-size: 22px; font-weight: bold; color: var(--vit-blue);">00:00</div>
+                    </div>
+                </aside>
+            </div>
+            
+            <footer style="background: rgba(240, 240, 240, 0.8); padding: 15px; text-align: center; font-size: 10px;">
+                &copy; 1984 - 2026 Vellore Institute of Technology.
+            </footer>
+        </div>
+    </div>
+
+    <div id="future-site">
+        <div class="modern-wrapper">
+            <header class="future-nav">
+                <div class="future-logo">VIT | VELLORE</div>
+                <div style="display: flex; gap: 60px; font-size: 14px; font-weight: 600; color: #555; letter-spacing: 3px; text-transform: uppercase;">
+                    <span>Research</span>
+                    <span style="color: white; border-bottom: 2px solid var(--vit-gold); padding-bottom: 5px;">V-TOP NEXT</span>
+                </div>
+            </header>
+
+            <h1 class="hero-text"> THE FUTURE <br><span style="color: var(--vit-gold);">IS HERE.</span> </h1>
+
+            <div class="bento-box">
+                <div class="bento-card" style="grid-column: span 8;">
+                    <h2 style="font-size: 56px; margin: 30px 0; font-weight: 900; line-height: 1;">Neural Academic Synthesis.</h2>
+                    <button class="pill-btn">Access Neural Interface</button>
+                </div>
+                <div class="bento-card" style="grid-column: span 4;">
+                    <h3 style="font-size: 26px; font-weight: 800;">Placement AI</h3>
+                    <p style="color: #666; font-size: 15px; margin-top: 20px;">Predictive career mapping Active.</p>
+                </div>
+            </div>
+        </div>
+        <button class="back-link" onclick="location.reload()">TIME TRAVEL : 2009</button>
+    </div>
+
+    <script>
+        /* --- CLOCK LOGIC --- */
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('time-display').innerText = now.toLocaleTimeString();
+            const clock = document.getElementById('large-clock');
+            if(clock) clock.innerText = now.getHours() + ":" + (now.getMinutes()<10?'0':'') + now.getMinutes();
+        }, 1000);
+
+        /* --- STARFIELD ENGINE --- */
+        const canvas = document.getElementById('spaceCanvas');
+        const ctx = canvas.getContext('2d');
+        let w, h, stars = [];
+        let speed = 0.5;
+        let warping = false;
+
+        function initStars() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+            stars = [];
+            for (let i = 0; i < 700; i++) {
+                stars.push({ x: (Math.random()-0.5)*w*2, y: (Math.random()-0.5)*h*2, z: Math.random()*w });
+            }
+        }
+
+        function drawStars() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.fillRect(0, 0, w, h);
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = warping ? 3 : 1;
+
+            for (let s of stars) {
+                let pz = s.z;
+                s.z -= speed;
+                if (s.z <= 0) { s.z = w; pz = w; }
+                let sx = (s.x / s.z) * (w / 2) + w / 2;
+                let sy = (s.y / s.z) * (h / 2) + h / 2;
+                let px = (s.x / pz) * (w / 2) + w / 2;
+                let py = (s.y / pz) * (h / 2) + h / 2;
+                ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(sx, sy); ctx.stroke();
+            }
+            requestAnimationFrame(drawStars);
+        }
+
+        /* --- TRANSITION ENGINE --- */
+        function initiateWarp() {
+            if (warping) return;
+            warping = true;
+
+            const retro = document.getElementById('retro-site');
+            const future = document.getElementById('future-site');
+            const flash = document.getElementById('flashOverlay');
+
+            // 1. Zoom Out Retro Site
+            retro.style.transform = 'scale(4)';
+            retro.style.opacity = '0';
+
+            // 2. High-Speed Acceleration
+            let accel = setInterval(() => {
+                speed += 12;
+                if (speed > 180) {
+                    clearInterval(accel);
+                    
+                    // 3. Flash Mask & Site Swap
+                    flash.style.opacity = '1';
+                    
+                    setTimeout(() => {
+                        retro.style.display = 'none';
+                        future.style.display = 'block';
+                        
+                        setTimeout(() => {
+                            flash.style.opacity = '0';
+                            future.style.opacity = '1';
+                            decelerate(); 
+                        }, 50);
+                    }, 150);
+                }
+            }, 20);
+        }
+
+        function decelerate() {
+            let decel = setInterval(() => {
+                speed -= 10;
+                if (speed <= 1.2) {
+                    speed = 1.2;
+                    clearInterval(decel);
+                    warping = false;
+                }
+            }, 30);
+        }
+
+        window.onresize = initStars;
+        initStars();
+        drawStars();
+    </script>
+</body>
+</html>
