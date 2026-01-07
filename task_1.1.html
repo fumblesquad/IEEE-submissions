@@ -6,9 +6,8 @@
     <title>Singularity | Hyper-Radiant</title>
     <style>
         :root {
-            /* REFINED PALETTE */
             --joy: #FFD700;       
-            --anxiety: #FF0000;   /* Aggressive Red */
+            --anxiety: #FF0000;   
             --sadness: #0066FF;   
             --calm: #00FFCC;      
 
@@ -25,7 +24,6 @@
             transition: background 1.5s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
-        /* 1. GRAIN OVERLAY */
         body::after {
             content: ""; position: fixed; inset: -50%; width: 200%; height: 200%;
             background-image: url('https://grainy-gradients.vercel.app/noise.svg');
@@ -38,7 +36,6 @@
             50% { transform:translate(12%, 9%); } 
         }
 
-        /* 2. ATMOSPHERE */
         #atmosphere {
             position: fixed; inset: 0; pointer-events: none; z-index: 2;
             opacity: 0; transition: opacity 1.2s ease, background 1.5s ease;
@@ -46,7 +43,6 @@
             mix-blend-mode: screen;
         }
 
-        /* 3. COLOR WELLS */
         .well {
             position: fixed; width: 90vw; height: 90vh;
             filter: blur(140px); opacity: 0.35; 
@@ -60,14 +56,12 @@
         
         .active-well { opacity: 0.95 !important; transform: scale(1.1); }
 
-        /* 4. CENTER VOID */
         #void-vignette {
             position: fixed; inset: 0;
             background: radial-gradient(circle at center, #000 15%, transparent 75%);
             z-index: 15; cursor: pointer;
         }
 
-        /* 5. TYPOGRAPHY */
         #ui-label {
             position: fixed; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
@@ -78,7 +72,6 @@
             text-shadow: 0 0 25px currentColor;
         }
 
-        /* 6. CANVAS */
         #fx-canvas {
             position: fixed; inset: 0; z-index: 5;
             pointer-events: none; opacity: 0;
